@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TODO LIST</title>
+    
+    <link rel="stylesheet" href="css/styles.css"></link>
+    <style>
+    .completed {
+      text-decoration: line-through;
+    }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('#new-task').onsubmit = () => {
+        const cb = document.createElement("INPUT");
+        cb.setAttribute("type", "checkbox");
+   
+        const li = document.createElement('li');
+        const taskText = document.createElement('span');
+        taskText.textContent = document.querySelector('#task').value;
+   
+        const deleteForm = document.createElement('form');
+        deleteForm.setAttribute('action', '/delete');
+        deleteForm.setAttribute('method', 'post');
+        deleteForm.setAttribute('style', 'display: inline;');
+   
+        const deleteInput = document.createElement('input');
+        deleteInput.setAttribute('type', 'hidden');
+        deleteInput.setAttribute('name', 'task');
+        deleteInput.setAttribute('value', document.querySelector('#task').value);
+   
+        const deleteButton = document.createElement('input');
+        deleteButton.setAttribute('type', 'submit');
+        deleteButton.setAttribute('value', 'Eliminar');
+   
+        deleteForm.appendChild(deleteInput);
+        deleteForm.appendChild(deleteButton);
+   
+        li.appendChild(cb);
+        li.appendChild(taskText);
+        li.appendChild(deleteForm);
+   
+        document.querySelector('#tasks').append(li);
+   
+        document.querySelector('#task').value = '';
+   
+        cb.addEventListener('change', () => {
+          if (cb.checked) {
+            taskText.classList.add('completed');
+          } else {
+            taskText.classList.remove('completed');
+          }
+        });
+   
+        return false;
+      };
+
+      document.querySelector('#complete-all').addEventListener('click', () => {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = !checkbox.checked;
+          checkbox.dispatchEvent(new Event('change'));
+        });
+      });
+    });
+   </script>
+  </head>
+  <body>
+
+    <form id="new-task">
+      <input id="task" autocomplete="off" autofocus placeholder="New Task" type="text">
+      <input type="submit">
+    </form>
+    <button id="complete-all">complete-all</button>
+    <ol id="tasks">
+    </ol>
+  </body>
+</html>
