@@ -12,7 +12,7 @@
     </style>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelector('#new-task').onsubmit = () => {
+      document.querySelector('#new-task').onsubmit = function () {
         const cb = document.createElement("INPUT");
         cb.setAttribute("type", "checkbox");
    
@@ -20,26 +20,31 @@
         const taskText = document.createElement('span');
         taskText.textContent = document.querySelector('#task').value;
    
-        const deleteForm = document.createElement('form');
-        deleteForm.setAttribute('action', '/delete');
-        deleteForm.setAttribute('method', 'post');
-        deleteForm.setAttribute('style', 'display: inline;');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Eliminar';
+        deleteButton.addEventListener('click', function () {
+          // Elimina la tarea al hacer clic en el botón Eliminar
+          li.remove();
    
-        const deleteInput = document.createElement('input');
-        deleteInput.setAttribute('type', 'hidden');
-        deleteInput.setAttribute('name', 'task');
-        deleteInput.setAttribute('value', document.querySelector('#task').value);
-   
-        const deleteButton = document.createElement('input');
-        deleteButton.setAttribute('type', 'submit');
-        deleteButton.setAttribute('value', 'Eliminar');
-   
-        deleteForm.appendChild(deleteInput);
-        deleteForm.appendChild(deleteButton);
+          // Envía la tarea a eliminar al servidor
+          fetch('/delete', {
+            method: 'POST',
+            body: JSON.stringify({ task: taskText.textContent }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (!data.success) {
+              console.error('Error al eliminar la tarea en el servidor');
+            }
+          });
+        });
    
         li.appendChild(cb);
         li.appendChild(taskText);
-        li.appendChild(deleteForm);
+        li.appendChild(deleteButton);
    
         document.querySelector('#tasks').append(li);
    
@@ -55,7 +60,7 @@
    
         return false;
       };
-
+   
       document.querySelector('#complete-all').addEventListener('click', () => {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach((checkbox) => {
@@ -67,12 +72,12 @@
    </script>
   </head>
   <body>
-
+    <h1>TO DO LIST</h1>
     <form id="new-task">
       <input id="task" autocomplete="off" autofocus placeholder="New Task" type="text">
       <input type="submit">
     </form>
-    <button id="complete-all">complete-all</button>
+    <button id="complete-all">Marcar todas como completadas</button>
     <ol id="tasks">
     </ol>
   </body>
