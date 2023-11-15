@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 
 app = Flask(__name__)
 
@@ -16,10 +16,12 @@ def add():
 
 @app.route('/delete', methods=['POST'])
 def delete():
-    task = request.form.get('task')
-    if task in tasks:
-        tasks.remove(task)
-    return redirect('/')
+    task_to_delete = request.json.get('task')  # Cambiado para obtener el valor desde el cuerpo JSON
+    if task_to_delete in tasks:
+        tasks.remove(task_to_delete)
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False)
 
-if __name__ == 'main':
-    app.run(debug=True,port=5001)
+if __name__ == '_main_':
+    app.run(debug=True)
